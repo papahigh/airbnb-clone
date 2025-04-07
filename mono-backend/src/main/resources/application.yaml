@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: airbnb-clone
+
+  liquibase:
+    change-log: classpath:/migrations/index.yaml
