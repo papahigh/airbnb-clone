@@ -1,6 +1,7 @@
 rootProject.name = "airbnb-clone"
 
 include("main-backend")
+include("packages:search")
 include("packages:storage")
 include("packages:storage:pipeline")
 include("packages:storage:pipeline-image")
