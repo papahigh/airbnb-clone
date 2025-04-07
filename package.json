@@ -1,0 +1,24 @@
+{
+  "name": "@airbnb/parent",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/papahigh/airbnb-clone.git"
+  },
+  "author": "Nikola P",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/papahigh/airbnb-clone/issues"
+  },
+  "homepage": "https://github.com/papahigh/airbnb-clone#readme",
+  "workspaces": [
+    "main-frontend",
+    "packages/types"
+  ],
+  "scripts": {
+    "main:dev": "next dev main-frontend"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
