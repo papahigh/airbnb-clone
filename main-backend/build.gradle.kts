@@ -1,11 +1,11 @@
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("plugin.spring") version "1.9.25"
-    id("org.springframework.boot") version "3.4.4"
-    id("io.spring.dependency-management") version "1.1.7"
-    id("org.hibernate.orm") version "6.6.11.Final"
-    id("org.graalvm.buildtools.native") version "0.10.6"
-    kotlin("plugin.jpa") version "1.9.25"
+    kotlin("jvm")
+    kotlin("plugin.spring")
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
+    id("org.hibernate.orm")
+    id("org.graalvm.buildtools.native")
+    kotlin("plugin.jpa")
 }
 
 group = "airbnb"

@@ -1,22 +1,18 @@
-plugins {
-    kotlin("jvm") version "1.9.25"
-}
+subprojects {
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+
+    dependencies {
+        add("testCompileOnly", rootProject.libs.junit.params)
+        add("testRuntimeOnly", rootProject.libs.junit.platform)
+        add("testImplementation", rootProject.libs.junit.jupiter)
     }
-}
 
-dependencies {
-    implementation(libs.org.json)
-    compileOnly(libs.opensearch.client)
+    extensions.configure<JavaPluginExtension> {
+        toolchain { languageVersion.set(JavaLanguageVersion.of(21)) }
+    }
 
-    testCompileOnly(libs.junit.params)
-    testRuntimeOnly(libs.junit.platform)
-    testImplementation(libs.junit.jupiter)
-}
-
-tasks.test {
-    useJUnitPlatform()
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
 }
