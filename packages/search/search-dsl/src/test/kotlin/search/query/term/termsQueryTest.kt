@@ -6,7 +6,7 @@ import search.dsl.query.term.terms
 import kotlin.test.assertNull
 
 
-class TermsQueryDslTest {
+class TermsQueryDslBuilderTest {
     class Props(val terms: List<String>?)
 
     val builder = terms<Props> {
