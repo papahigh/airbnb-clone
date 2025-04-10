@@ -3,26 +3,25 @@ package search.compose
 import org.junit.jupiter.api.Test
 import search.assertJson
 import search.dsl.compose.orElse
-import search.dsl.query.term.ids
 import search.dsl.query.matchAll
+import search.dsl.query.term.ids
 
 
 class OrElseDslBuilderTest {
 
-    val target = ids<IdsRequest> { values = { it.ids } }
-    val fallback = matchAll<IdsRequest>()
+    data class Props(val ids: List<Int>? = null)
+
+    val builder = ids<Props> { values = { it.ids } }.orElse(matchAll())
 
     @Test
     fun `should produce target dsl output`() {
-        var output = target.orElse(fallback).build(IdsRequest(listOf(1, 2, 3)))
+        var output = builder.build(Props(listOf(1, 2, 3)))
         assertJson(output, """{ "ids": { "values": [ 1, 2, 3 ], "boost": 1 } }""")
     }
 
     @Test
     fun `should produce fallback dsl output`() {
-        var output = target.orElse(fallback).build(IdsRequest(null))
+        var output = builder.build(Props(null))
         assertJson(output, """{ "match_all" : {} }""")
     }
-
-    data class IdsRequest(val ids: List<Int>? = null)
 }

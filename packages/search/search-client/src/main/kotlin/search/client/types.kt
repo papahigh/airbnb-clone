@@ -1,10 +1,10 @@
 package search.client
 
-interface SearchClient<T, R> {
-    fun count(request: T): CountResponse
-    fun search(request: T): SearchResponse<R>
+interface SearchClient<Props, Hit> {
+    fun count(props: Props): CountResponse
+    fun search(props: Props): SearchResponse<Hit>
 }
 
 class CountResponse
 
-class SearchResponse<R>
+class SearchResponse<Hit>

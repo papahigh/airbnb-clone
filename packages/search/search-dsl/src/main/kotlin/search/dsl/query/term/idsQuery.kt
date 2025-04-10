@@ -4,9 +4,13 @@ import org.json.JSONObject
 import search.dsl.DslBuilder
 
 
-class IdsQueryDslBuilder<T> internal constructor(private val options: Options<T>) : DslBuilder<T> {
+// https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-ids-query.html
+// https://opensearch.org/docs/latest/query-dsl/term/ids/
+class IdsQueryDslBuilder<Props> internal constructor(
+    private val options: Options<Props>
+) : DslBuilder<Props> {
 
-    override fun build(input: T) = options.values(input)?.let {
+    override fun build(props: Props) = options.values(props)?.let {
         if (it.isNotEmpty()) {
             JSONObject()
                 .put(
@@ -17,14 +21,12 @@ class IdsQueryDslBuilder<T> internal constructor(private val options: Options<T>
         } else null
     }
 
-    class Options<T> {
-        var values: (input: T) -> Collection<*>? = { null }
+    class Options<Props> {
+        var values: (props: Props) -> Collection<*>? = { null }
         var boost: Double = 1.0
     }
 }
 
-// https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-ids-query.html
-// https://opensearch.org/docs/latest/query-dsl/term/ids/
-fun <T> ids(fn: IdsQueryDslBuilder.Options<T>.() -> Unit): DslBuilder<T> {
-    return IdsQueryDslBuilder(IdsQueryDslBuilder.Options<T>().apply(fn))
+fun <Props> ids(init: IdsQueryDslBuilder.Options<Props>.() -> Unit): DslBuilder<Props> {
+    return IdsQueryDslBuilder(IdsQueryDslBuilder.Options<Props>().apply(init))
 }

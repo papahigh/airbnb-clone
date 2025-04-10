@@ -4,15 +4,19 @@ import org.json.JSONObject
 import search.dsl.DslBuilder
 
 
-class RangeQueryDslBuilder<T> internal constructor(private val options: Options<T>) : DslBuilder<T> {
+// https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html
+// https://opensearch.org/docs/latest/query-dsl/term/range/
+class RangeQueryDslBuilder<Props> internal constructor(
+    private val options: Options<Props>
+) : DslBuilder<Props> {
 
-    override fun build(input: T): JSONObject? {
+    override fun build(props: Props): JSONObject? {
 
         val field = TouchableJSONObject()
-            .putOpt("gt", options.gt?.invoke(input))
-            .putOpt("gte", options.gte?.invoke(input))
-            .putOpt("lt", options.lt?.invoke(input))
-            .putOpt("lte", options.lte?.invoke(input))
+            .putOpt("gt", options.gt?.invoke(props))
+            .putOpt("gte", options.gte?.invoke(props))
+            .putOpt("lt", options.lt?.invoke(props))
+            .putOpt("lte", options.lte?.invoke(props))
 
         return if (field.touched)
             JSONObject().put(
@@ -38,21 +42,19 @@ class RangeQueryDslBuilder<T> internal constructor(private val options: Options<
         }
     }
 
-    class Options<T> {
+    class Options<Props> {
         var field = "undefined"
         var boost: Double = 1.0
-        var gt: ((input: T) -> Any)? = null
-        var gte: ((input: T) -> Any)? = null
-        var lt: ((input: T) -> Any)? = null
-        var lte: ((input: T) -> Any)? = null
+        var gt: ((props: Props) -> Any?)? = null
+        var gte: ((props: Props) -> Any?)? = null
+        var lt: ((props: Props) -> Any?)? = null
+        var lte: ((props: Props) -> Any?)? = null
         var format: String? = null
         var relation: String? = null
         var timeZone: String? = null
     }
 }
 
-// https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html
-// https://opensearch.org/docs/latest/query-dsl/term/range/
-fun <T> range(fn: RangeQueryDslBuilder.Options<T>.() -> Unit): DslBuilder<T> {
-    return RangeQueryDslBuilder(RangeQueryDslBuilder.Options<T>().apply(fn))
+fun <Props> range(init: RangeQueryDslBuilder.Options<Props>.() -> Unit): DslBuilder<Props> {
+    return RangeQueryDslBuilder(RangeQueryDslBuilder.Options<Props>().apply(init))
 }

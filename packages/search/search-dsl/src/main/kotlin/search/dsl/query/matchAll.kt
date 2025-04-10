@@ -4,21 +4,19 @@ import org.json.JSONObject
 import search.dsl.DslBuilder
 
 
-internal class MatchAllQueryDslBuilder<T> : DslBuilder<T> {
-    override fun build(input: T): JSONObject? {
+// https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-all-query.html
+// https://opensearch.org/docs/latest/query-dsl/match-all/
+fun <Props> matchAll(): DslBuilder<Props> = object : DslBuilder<Props> {
+    override fun build(props: Props): JSONObject? {
         return JSONObject().put("match_all", JSONObject())
     }
 }
 
+
+// https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-all-query.html
 // https://opensearch.org/docs/latest/query-dsl/match-all/
-fun <T> matchAll(): DslBuilder<T> = MatchAllQueryDslBuilder<T>()
-
-
-internal class MatchNoneQueryDslBuilder<T> : DslBuilder<T> {
-    override fun build(input: T): JSONObject? {
+fun <Props> matchNone(): DslBuilder<Props> = object : DslBuilder<Props> {
+    override fun build(props: Props): JSONObject? {
         return JSONObject().put("match_none", JSONObject())
     }
 }
-
-// https://opensearch.org/docs/latest/query-dsl/match-all/
-fun <T> matchNone(): DslBuilder<T> = MatchNoneQueryDslBuilder<T>()

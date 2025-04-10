@@ -4,11 +4,11 @@ import org.json.JSONObject
 import search.dsl.DslBuilder
 
 
-fun <T> DslBuilder<T>.orElse(fallback: DslBuilder<T>): DslBuilder<T> {
+fun <Props> DslBuilder<Props>.orElse(fallback: DslBuilder<Props>): DslBuilder<Props> {
     val target = this
-    return object : DslBuilder<T> {
-        override fun build(input: T): JSONObject? {
-            return target.build(input) ?: fallback.build(input)
+    return object : DslBuilder<Props> {
+        override fun build(props: Props): JSONObject? {
+            return target.build(props) ?: fallback.build(props)
         }
     }
 }

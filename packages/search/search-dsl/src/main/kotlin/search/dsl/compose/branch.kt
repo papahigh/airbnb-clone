@@ -3,23 +3,23 @@ package search.dsl.compose
 import search.dsl.DslBuilder
 
 
-class BranchDslBuilder<T> internal constructor(
-    private val options: Options<T>
-) : DslBuilder<T> {
+class BranchDslBuilder<Props> internal constructor(
+    private val options: Options<Props>
+) : DslBuilder<Props> {
 
-    override fun build(input: T) = if (options.testIf(input)) {
-        options.thenDo.build(input)
+    override fun build(props: Props) = if (options.testIf(props)) {
+        options.thenDo.build(props)
     } else {
-        options.orElse?.build(input)
+        options.orElse?.build(props)
     }
 
-    class Options<T> {
-        var testIf = { _: T -> true }
-        var thenDo = DslBuilder.noop<T>()
-        var orElse: DslBuilder<T>? = null
+    class Options<Props> {
+        var testIf = { _: Props -> true }
+        var thenDo = DslBuilder.noop<Props>()
+        var orElse: DslBuilder<Props>? = null
     }
 }
 
-fun <T> branch(fn: BranchDslBuilder.Options<T>.() -> Unit): DslBuilder<T> {
-    return BranchDslBuilder(BranchDslBuilder.Options<T>().apply(fn))
+fun <Props> branch(init: BranchDslBuilder.Options<Props>.() -> Unit): DslBuilder<Props> {
+    return BranchDslBuilder(BranchDslBuilder.Options<Props>().apply(init))
 }

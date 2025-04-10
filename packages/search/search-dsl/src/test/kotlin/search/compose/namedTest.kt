@@ -9,7 +9,9 @@ import search.dsl.query.term.ids
 
 class NamedDslBuilderTest {
 
-    val builder = named<IdsRequest> {
+    data class Props(val ids: List<Int>? = null)
+
+    val builder = named<Props> {
         name = "myName"
         then = ids {
             values = { it.ids }
@@ -18,14 +20,12 @@ class NamedDslBuilderTest {
 
     @Test
     fun `should build named dsl correctly`() {
-        val output = builder.build(IdsRequest(listOf(1, 2, 3)))
+        val output = builder.build(Props(listOf(1, 2, 3)))
         assertJson(output, """{ "myName": { "ids": { "values": [ 1, 2, 3 ], "boost": 1 } } }""")
     }
 
     @Test
     fun `should not build for null value`() {
-        assertNull(builder.build(IdsRequest(null)))
+        assertNull(builder.build(Props(null)))
     }
-
-    data class IdsRequest(val ids: List<Int>? = null)
 }

@@ -4,17 +4,20 @@ import org.json.JSONObject
 import search.dsl.DslBuilder
 
 
-class NamedDslBuilder<T> internal constructor(private val options: Options<T>) : DslBuilder<T> {
-    override fun build(input: T): JSONObject? {
-        return options.then.build(input)?.let { JSONObject().put(options.name, it) }
+class NamedDslBuilder<Props> internal constructor(
+    private val options: Options<Props>,
+) : DslBuilder<Props> {
+
+    override fun build(props: Props): JSONObject? {
+        return options.then.build(props)?.let { JSONObject().put(options.name, it) }
     }
 
-    class Options<T> {
+    class Options<Props> {
         var name: String = "undefined"
-        var then: DslBuilder<T> = DslBuilder.noop()
+        var then: DslBuilder<Props> = DslBuilder.noop()
     }
 }
 
-fun <T> named(fn: NamedDslBuilder.Options<T>.() -> Unit): DslBuilder<T> {
-    return NamedDslBuilder(NamedDslBuilder.Options<T>().apply(fn))
+fun <Props> named(init: NamedDslBuilder.Options<Props>.() -> Unit): DslBuilder<Props> {
+    return NamedDslBuilder(NamedDslBuilder.Options<Props>().apply(init))
 }

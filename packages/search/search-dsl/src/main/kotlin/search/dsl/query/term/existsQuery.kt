@@ -4,8 +4,13 @@ import org.json.JSONObject
 import search.dsl.DslBuilder
 
 
-class ExistsQueryDslBuilder<T> internal constructor(val options: Options) : DslBuilder<T> {
-    override fun build(input: T): JSONObject? {
+// https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-query.html
+// https://opensearch.org/docs/latest/query-dsl/term/exists
+class ExistsQueryDslBuilder<Props> internal constructor(
+    private val options: Options
+) : DslBuilder<Props> {
+
+    override fun build(props: Props): JSONObject? {
         return JSONObject()
             .put(
                 "exists", JSONObject()
@@ -20,9 +25,6 @@ class ExistsQueryDslBuilder<T> internal constructor(val options: Options) : DslB
     }
 }
 
-
-// https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-query.html
-// https://opensearch.org/docs/latest/query-dsl/term/exists
-fun <T> exists(fn: ExistsQueryDslBuilder.Options.() -> Unit): DslBuilder<T> {
-    return ExistsQueryDslBuilder(ExistsQueryDslBuilder.Options().apply(fn))
+fun <Props> exists(init: ExistsQueryDslBuilder.Options.() -> Unit): DslBuilder<Props> {
+    return ExistsQueryDslBuilder(ExistsQueryDslBuilder.Options().apply(init))
 }

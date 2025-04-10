@@ -10,35 +10,52 @@ import search.dsl.query.matchNone
 
 class BranchDslBuilderTest {
 
+    class Props(val condition: Boolean)
+
     @Test
     fun `should proceed with 'then' branch if condition is true`() {
-        val builder = branch<Request> {
+        val builder = branch<Props> {
             testIf = { it.condition }
             thenDo = matchAll()
             orElse = matchNone()
         }
 
-        val output = builder.build(Request(true))
+        val output = builder.build(Props(true))
         assertJson(output, """{ "match_all": {} }""")
     }
 
     @Test
     fun `should proceed with 'else' branch if condition is false`() {
-        val builder = branch<Request> {
+        val builder = branch<Props> {
             testIf = { it.condition }
             thenDo = matchAll()
             orElse = matchNone()
         }
 
-        val output = builder.build(Request(false))
+        val output = builder.build(Props(false))
         assertJson(output, """{ "match_none": {} }""")
     }
 
     @Test
-    fun `should not emit if not configured properly`() {
-        val builder = branch<Request> {}
-        assertNull(builder.build(Request(true)))
+    fun `should handle nested condition`() {
+        class Props(val first: Boolean, val second: Boolean)
+
+        val builder = branch<Props> {
+            testIf = { it.first }
+            thenDo = branch {
+                testIf = { it.second }
+                thenDo = matchNone()
+                orElse = matchAll()
+            }
+            orElse = matchNone()
+        }
+
+        assertJson(builder.build(Props(first = true, second = false)), """{ "match_all": {} }""")
     }
 
-    class Request(val condition: Boolean)
+    @Test
+    fun `should not emit if not configured properly`() {
+        val builder = branch<Props> {}
+        assertNull(builder.build(Props(true)))
+    }
 }
