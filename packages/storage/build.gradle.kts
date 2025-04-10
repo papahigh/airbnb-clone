@@ -1,6 +1,7 @@
 subprojects {
 
     apply(plugin = "java")
+    apply(plugin = "org.jetbrains.kotlin.jvm")
 
     dependencies {
         add("compileOnly", rootProject.libs.jetbrains.annotations)
@@ -18,6 +19,10 @@ subprojects {
 
         add("testImplementation", rootProject.libs.junit.jupiter)
         add("testRuntimeOnly", rootProject.libs.junit.platform)
+    }
+
+    extensions.configure<JavaPluginExtension> {
+        toolchain { languageVersion.set(JavaLanguageVersion.of(21)) }
     }
 
     tasks.withType<Test> {
