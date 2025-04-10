@@ -3,7 +3,7 @@ package search.dsl
 import org.json.JSONObject
 
 /**
- * Defines a DSL builder contract for ElasticSearch compliant JSON request.
+ * Represents a builder interface for ElasticSearch compliant JSON-DSL request.
  */
 interface DslBuilder<Props> {
 
