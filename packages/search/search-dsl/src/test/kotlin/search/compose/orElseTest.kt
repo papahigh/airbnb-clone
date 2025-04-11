@@ -11,7 +11,7 @@ class OrElseDslBuilderTest {
 
     data class Props(val ids: List<Int>? = null)
 
-    val builder = ids<Props> { values = { it.ids } }.orElse(matchAll())
+    val builder = ids<Props> { values = { it.ids } }.orElse { matchAll() }
 
     @Test
     fun `should produce target dsl output`() {
