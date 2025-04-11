@@ -36,7 +36,7 @@ class HasParentQueryDslBuilderTest {
                         }
                     },
                     "score": true,
-                    "ignore_unmapped": true,
+                    "ignore_unmapped": true
                 }
             }
             """
