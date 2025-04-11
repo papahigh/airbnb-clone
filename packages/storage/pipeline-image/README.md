@@ -5,60 +5,54 @@ The module offers integration with [Deep Java Library](https://djl.ai/),
 [ImageMagick](https://imagemagick.org/), and [metadata-extractor](https://github.com/drewnoakes/metadata-extractor).
 
 
-## Java API
+## Kotlin API
+This module exposes Kotlin DSL to define a sequence of processing steps
+that can be applied to image artifacts. The steps include classification, 
+metadata extraction, and general image manipulation using ImageMagick.
 
-The `ImagePipeline` class serves as the entry point for building configurable and extensible
-image processing pipelines. It provides a fluent API to define a sequence of processing steps
-that can be applied to image artifacts. The steps include classification, metadata extraction,
-and general image manipulation using ImageMagick.
+```kotlin
+import pipeline.MediaType
+import pipeline.image.classifyImage
+import pipeline.image.extractMetadata
+import pipeline.image.imageMagick
+import pipeline.image.imagePipeline
+import pipeline.tempBlob
+import java.nio.file.Files
+import java.nio.file.Path
 
-```java
-import pipeline.MediaType;
-import pipeline.TempBlob;
-import pipeline.image.ImagePipeline;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-class Example {
-    public static void main(String[] args) {
-        // @formatter:off
-        var pipeline = ImagePipeline.builder()
-                .extractMetadata()
-                    .outputName("metadata")
-                .and()
-                .imageMagick()
-                    .outputName("thumbnail_jpg")
-                    .outputType(MediaType.IMAGE_JPEG)
-                    .resize("300")
-                    .quality("80%")
-                    .strip()
-                .and()
-                .imageMagick()
-                    .outputName("thumbnail_webp")
-                    .outputType(MediaType.IMAGE_WEBP)
-                    .resize("200x200")
-                    .quality("80%")
-                    .strip()
-                .and()
-                .classifyImage()
-                    .outputName("classification")
-                    .predictorFactory(zooModel::newPredictor)
-                    .topK(10)
-                .build();
-        // @formatter:on
-
-        var blob = TempBlob.builder("dog.jpg")
-                .mediaType(MediaType.IMAGE_JPEG)
-                .content(Files.newInputStream(Path.of("dog.jpg")))
-                .build();
-
-        var output = pipeline.process(blob);
-
-        System.out.println(output.getArtifact("thumbnail_jpg"));
-        System.out.println(output.getArtifact("thumbnail_webp"));
-        System.out.println(output.getArtifact("classification"));
-        System.out.println(output.getArtifact("metadata"));
+val pipeline = imagePipeline {
+    imageMagick {
+        outputName("thumbnail_jpg")
+        outputType(MediaType.IMAGE_JPEG)
+        resize("300")
+        quality("80%")
+        strip()
     }
+    imageMagick {
+        outputName("thumbnail_webp")
+        outputType(MediaType.IMAGE_WEBP)
+        resize("200x200")
+        quality("80%")
+        strip()
+    }
+    classifyImage {
+        outputName("classification")
+        predictorFactory(zooModel::newPredictor)
+        topK(10)
+    }
+    extractMetadata {}
+}
+
+var blob = tempBlob("dog.jpg") {
+    content(Files.newInputStream(Path.of("dog.jpg")))
+    mediaType(MediaType.IMAGE_JPEG)
+}
+
+pipeline.process(blob).use { output ->
+    println(output.getArtifact("thumbnail_jpg"))
+    println(output.getArtifact("thumbnail_webp"))
+    println(output.getArtifact("classification"))
+    println(output.getArtifact("metadata"))
 }
 ```
